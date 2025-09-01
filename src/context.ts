@@ -11,7 +11,7 @@ import {
   ReadResourceRequest,
   ReadResourceResult,
   Root,
-} from "@modelcontextprotocol/sdk/types";
+} from "@modelcontextprotocol/sdk/types.js";
 import { AgContentApi } from "./api";
 import { Workspace, WorkspaceContext } from "./workspace";
 import { ServerNotifications } from "./server";
@@ -26,11 +26,51 @@ const AG_GRID_PACKAGES = [
   "ag-grid-vue",
 ] as const;
 
+interface SearchParams {
+  /** Search query string */
+  q: string;
+  
+  /** Document sets to search (defaults to all if not specified) */
+  docs?: ('grid' | 'charts' | 'dash')[];
+  
+  /** Content sections to include (defaults to all if not specified) */
+  sections?: ('docs' | 'examples' | 'definitions')[];
+  
+  /** Whether to include example code inline */
+  inline_examples?: boolean;
+  
+  /** Whether to exclude enterprise documentation */
+  exclude_enterprise?: boolean;
+}
+
+
 export class AgMcpContext {
   private workspaces: Workspace[] = [];
   private roots: Root[] = [];
 
   constructor(private api: AgContentApi, private notify: ServerNotifications) {
+    this.workspaces.push(
+      new Workspace(api, {
+        name: "root",
+        uri: "",
+        context: {
+          version: {
+            releaseDate: new Date(),
+            url: "",
+            isLatest: true,
+            id: "",
+            semver: {
+              major: 1,
+              minor: 0,
+              patch: 0,
+
+            }
+          },
+          framework: "react",
+          isEnterprise: true
+        }
+      })
+    )
   }
 
   private async readWorkspaceContext(

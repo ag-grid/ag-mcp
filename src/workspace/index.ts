@@ -1,12 +1,13 @@
 import {
   CallToolRequest,
+  CallToolResult,
   ErrorCode,
   GetPromptRequest,
   McpError,
   Prompt,
   Resource,
   Tool,
-} from "@modelcontextprotocol/sdk/types";
+} from "@modelcontextprotocol/sdk/types.js";
 import { AgContentApi } from "../api";
 import {
   FrameworkName,
@@ -47,7 +48,7 @@ export class Workspace {
 
   private prompts: PromptDefinition[] = [];
   private tools: ToolDefinition[] = [];
-  private resources: Promise<ResourceDefinition[]>;
+  private resources: Promise<ResourceDefinition[]> = Promise.resolve([]);
 
   private packages: string[] = [];
 
@@ -66,8 +67,39 @@ export class Workspace {
     this.uri = workspace.uri;
     this.context = workspace.context;
 
-    this.resources = this.getResources();
+    // this.resources = this.getResources();
     this.prompts = this.getPrompts();
+
+    this.tools.push({
+      name: "Search",
+      listing: {
+        name: "Search",
+        title: "AG Grid Documentation Search",
+        description: "Search the AG-Grid documentation using a lexical and semantic hybrid search, fixed at the version currently installed",
+        inputSchema: {
+          type: "object",
+          properties: {
+            query: {
+          type: "string",
+          description: "The query parameter"
+        }
+          },
+          required: ["query"]
+        }
+      },
+      handler: async (args) => {
+        console.error(JSON.stringify(args))
+        const text = await this.searchDocs(args?.query as string);
+        return {
+          content: [{
+            type: "text" as const,
+            text
+          }],
+          isError: false,
+          structuredContent: undefined
+        } as CallToolResult
+      }
+    })
   }
 
   get isInstalled(): boolean {
@@ -245,14 +277,19 @@ export class Workspace {
     return this.getFrameworkApi().docs();
   }
 
-  async searchDocs(query: string): Promise<DocList> {
-    const docs = await this.getDocs();
-    const lowerQuery = query.toLowerCase();
-    return docs.filter(
-      (doc) =>
-        doc.name.toLowerCase().includes(lowerQuery) ||
-        (doc.description && doc.description.toLowerCase().includes(lowerQuery))
-    );
+  async searchDocs(query: string): Promise<string> {
+    const result = await fetch(`http://localhost:3000/archive/latest/react/search?q=${query}`);
+
+    return await result.text();
+
+    
+    // const docs = await this.getDocs();
+    // const lowerQuery = query.toLowerCase();
+    // return docs.filter(
+    //   (doc) =>
+    //     doc.name.toLowerCase().includes(lowerQuery) ||
+    //     (doc.description && doc.description.toLowerCase().includes(lowerQuery))
+    // );
   }
 
   /**

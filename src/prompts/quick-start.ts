@@ -1,4 +1,4 @@
-import { GetPromptRequest, GetPromptResult } from "@modelcontextprotocol/sdk/types";
+import { GetPromptRequest, GetPromptResult } from "@modelcontextprotocol/sdk/types.js";
 import { PromptDefinition } from "../utils/types";
 import { Workspace } from "../workspace";
 

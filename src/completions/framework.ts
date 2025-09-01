@@ -1,4 +1,4 @@
-import { CompleteResult } from "@modelcontextprotocol/sdk/types";
+import { CompleteResult } from "@modelcontextprotocol/sdk/types.js";
 import { VersionEndpoint } from "../api/models";
 
 

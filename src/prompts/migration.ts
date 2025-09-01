@@ -3,7 +3,7 @@ import {
   GetPromptRequest,
   GetPromptResult,
   McpError,
-} from "@modelcontextprotocol/sdk/types";
+} from "@modelcontextprotocol/sdk/types.js";
 import { PromptDefinition } from "../utils/types";
 import { Workspace } from "../workspace";
 import { Semver } from "../utils/semver";

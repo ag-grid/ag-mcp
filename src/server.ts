@@ -10,10 +10,10 @@ import {
   McpError,
   ReadResourceRequestSchema,
   RootsListChangedNotificationSchema,
-} from "@modelcontextprotocol/sdk/types";
+} from "@modelcontextprotocol/sdk/types.js";
 import { AgContentApi } from "./api";
 import { AgMcpContext } from "./context";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 export interface ServerNotifications {
   notifyResourceListChanged(): void;

@@ -1,4 +1,4 @@
-import { CompleteRequest, CompleteResult, ErrorCode, McpError } from "@modelcontextprotocol/sdk/types"
+import { CompleteRequest, CompleteResult, ErrorCode, McpError } from "@modelcontextprotocol/sdk/types.js"
 import { completeVersion } from "./version"
 import { completeFramework } from "./framework";
 import { AgContentApi } from "../api";

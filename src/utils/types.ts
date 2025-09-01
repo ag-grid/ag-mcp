@@ -1,4 +1,4 @@
-import { CallToolRequest, CallToolResult, GetPromptRequest, GetPromptResult, Prompt, ReadResourceRequest, ReadResourceResult, Resource, Tool } from "@modelcontextprotocol/sdk/types"
+import { CallToolRequest, CallToolResult, GetPromptRequest, GetPromptResult, Prompt, ReadResourceRequest, ReadResourceResult, Resource, Tool } from "@modelcontextprotocol/sdk/types.js"
 
 export type PromptDefinition = {
     name: string,
