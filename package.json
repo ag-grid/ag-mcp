@@ -1,6 +1,6 @@
 {
-  "name": "ag-grid-mcp",
-  "version": "34.0.0",
+  "name": "ag-mcp",
+  "version": "1.0.0",
   "description": "MCP server for AG-Grid to help developers integrate AG-Grid into their applications",
   "main": "dist/index.js",
   "bin": {
