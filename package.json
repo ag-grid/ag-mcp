@@ -4,7 +4,7 @@
   "description": "MCP server for AG-Grid to help developers integrate AG-Grid into their applications",
   "main": "dist/index.js",
   "bin": {
-    "ag-grid-mcp": "dist/index.js"
+    "ag-mcp": "dist/index.js"
   },
   "type": "module",
   "scripts": {
