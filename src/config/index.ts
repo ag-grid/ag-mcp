@@ -1,6 +1,6 @@
 import envPaths from "env-paths";
 import { readFile, writeFile, mkdir } from "fs/promises";
-import { detect, resolveCommand } from "package-manager-detector";
+import { detect } from "package-manager-detector";
 import { join } from "path";
 import { isPackageExists } from "local-pkg";
 import z from "zod";
@@ -47,6 +47,18 @@ const detectFramework = async (projectPath: string): Promise<"react" | "angular"
         
         const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
         
+        // Check for framework-specific AG Grid packages first (most specific)
+        // Legacy modular packages first
+        if (dependencies['@ag-grid-community/react']) return "react";
+        if (dependencies['@ag-grid-community/angular']) return "angular";
+        if (dependencies['@ag-grid-community/vue3']) return "vue";
+        
+        // Newer single packages
+        if (dependencies['ag-grid-react']) return "react";
+        if (dependencies['ag-grid-angular']) return "angular";
+        if (dependencies['ag-grid-vue'] || dependencies['ag-grid-vue3']) return "vue";
+        
+        // Fallback to general framework detection
         if (dependencies['@angular/core']) return "angular";
         if (dependencies['react']) return "react";
         if (dependencies['vue']) return "vue";
@@ -64,13 +76,33 @@ const detectAgGridVersion = async (projectPath: string): Promise<string | undefi
         
         const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
         
-        // Check for AG Grid packages
-        const agGridVersion = dependencies['ag-grid-community'] || 
-                             dependencies['ag-grid-enterprise'] ||
-                             dependencies['ag-grid-react'] ||
-                             dependencies['ag-grid-angular'] ||
-                             dependencies['ag-grid-vue3'] ||
-                             dependencies['ag-grid-vue'];
+        // Check for legacy modular packages first (more common in older projects)
+        let agGridVersion = dependencies['@ag-grid-community/core'] ||
+                           dependencies['@ag-grid-community/react'] ||
+                           dependencies['@ag-grid-community/angular'] ||
+                           dependencies['@ag-grid-community/vue3'] ||
+                           dependencies['@ag-grid-community/styles'] ||
+                           dependencies['@ag-grid-community/client-side-row-model'];
+        
+        // Also check enterprise packages
+        if (!agGridVersion) {
+            for (const depName of Object.keys(dependencies)) {
+                if (depName.startsWith('@ag-grid-enterprise/')) {
+                    agGridVersion = dependencies[depName];
+                    break;
+                }
+            }
+        }
+        
+        // If no modular packages found, check for newer single packages
+        if (!agGridVersion) {
+            agGridVersion = dependencies['ag-grid-community'] || 
+                           dependencies['ag-grid-enterprise'] ||
+                           dependencies['ag-grid-react'] ||
+                           dependencies['ag-grid-angular'] ||
+                           dependencies['ag-grid-vue3'] ||
+                           dependencies['ag-grid-vue'];
+        }
         
         if (agGridVersion) {
             // Remove version prefixes like ^, ~, >=
@@ -90,6 +122,14 @@ const detectEnterprise = async (projectPath: string): Promise<boolean> => {
         
         const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
         
+        // Check for legacy modular enterprise packages first
+        for (const depName of Object.keys(dependencies)) {
+            if (depName.startsWith('@ag-grid-enterprise/')) {
+                return true;
+            }
+        }
+        
+        // Check for newer single enterprise package
         return !!(dependencies['ag-grid-enterprise']);
     } catch (error) {
         return false;
@@ -105,13 +145,17 @@ export const readProject = async (path: string): Promise<Project | undefined> =>
         return undefined;
     }
 
-    // Check if AG Grid is installed
-    const hasAgGrid = await isPackageExists("ag-grid-community", { paths: [path] }) ||
-                      await isPackageExists("ag-grid-enterprise", { paths: [path] }) ||
-                      await isPackageExists("ag-grid-react", { paths: [path] }) ||
-                      await isPackageExists("ag-grid-angular", { paths: [path] }) ||
-                      await isPackageExists("ag-grid-vue3", { paths: [path] }) ||
-                      await isPackageExists("ag-grid-vue", { paths: [path] });
+    // Check if AG Grid is installed - check both legacy modular and newer single packages
+    const hasAgGrid = isPackageExists("ag-grid-community", { paths: [path] }) ||
+                      isPackageExists("ag-grid-enterprise", { paths: [path] }) ||
+                      isPackageExists("ag-grid-react", { paths: [path] }) ||
+                      isPackageExists("ag-grid-angular", { paths: [path] }) ||
+                      isPackageExists("ag-grid-vue3", { paths: [path] }) ||
+                      isPackageExists("ag-grid-vue", { paths: [path] }) ||
+                      isPackageExists("@ag-grid-community/core", { paths: [path] }) ||
+                      isPackageExists("@ag-grid-community/react", { paths: [path] }) ||
+                      isPackageExists("@ag-grid-community/angular", { paths: [path] }) ||
+                      isPackageExists("@ag-grid-community/vue3", { paths: [path] });
 
     if (!hasAgGrid) {
         return undefined;
