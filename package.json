@@ -3,9 +3,6 @@
   "version": "1.0.0-beta.20250909.1522",
   "description": "MCP server for AG-Grid to help developers integrate AG-Grid into their applications",
   "main": "dist/index.js",
-  "bin": {
-    "ag-mcp": "dist/index.js"
-  },
   "type": "module",
   "scripts": {
     "build": "tsc",
