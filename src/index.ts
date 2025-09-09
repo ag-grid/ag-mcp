@@ -1,4 +1,4 @@
-import { AgMcpServer } from './server';
+import { AgMcpServer } from './server.js';
 
 const server = new AgMcpServer("https://grid-staging.ag-grid.com/");
 server.run().catch((error) => {

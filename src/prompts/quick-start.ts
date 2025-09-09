@@ -1,6 +1,5 @@
 import { GetPromptRequest, GetPromptResult } from "@modelcontextprotocol/sdk/types.js";
 import { PromptDefinition } from "../utils/types";
-import { Workspace } from "../workspace";
 
 const listing = {
     name: 'quick-start',
@@ -61,7 +60,7 @@ I'm looking for practical, working code examples that I can copy and use directl
   };
 }
 
-export const createQuickStartPrompt = (workspace: Workspace): PromptDefinition => {
+export const createQuickStartPrompt = (): PromptDefinition => {
   return {
     name: "quick-start",
     listing,

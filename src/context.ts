@@ -1,5 +1,3 @@
-import fs from "node:fs/promises";
-import path from "node:path";
 import {
   CallToolRequest,
   CallToolResult,
@@ -12,207 +10,118 @@ import {
   ReadResourceResult,
   Root,
 } from "@modelcontextprotocol/sdk/types.js";
-import { AgContentApi } from "./api";
-import { Workspace, WorkspaceContext } from "./workspace";
-import { ServerNotifications } from "./server";
-import { FrameworkName } from "./api/types";
-
-const AG_GRID_PACKAGES = [
-  "ag-grid-community",
-  "ag-grid-enterprise",
-  "ag-grid-react",
-  "ag-grid-angular",
-  "ag-grid-vue3",
-  "ag-grid-vue",
-] as const;
-
-interface SearchParams {
-  /** Search query string */
-  q: string;
-  
-  /** Document sets to search (defaults to all if not specified) */
-  docs?: ('grid' | 'charts' | 'dash')[];
-  
-  /** Content sections to include (defaults to all if not specified) */
-  sections?: ('docs' | 'examples' | 'definitions')[];
-  
-  /** Whether to include example code inline */
-  inline_examples?: boolean;
-  
-  /** Whether to exclude enterprise documentation */
-  exclude_enterprise?: boolean;
-}
-
+import { ServerNotifications } from "./server.js";
+import { createQuickStartPrompt } from "./prompts/quick-start.js";
+import { createMigrationPrompt } from "./prompts/migration.js";
+import { API_URL } from "./constants.js";
 
 export class AgMcpContext {
-  private workspaces: Workspace[] = [];
-  private roots: Root[] = [];
+  private prompts = [createQuickStartPrompt(), createMigrationPrompt()];
 
-  constructor(private api: AgContentApi, private notify: ServerNotifications) {
-    this.workspaces.push(
-      new Workspace(api, {
-        name: "root",
-        uri: "",
-        context: {
-          version: {
-            releaseDate: new Date(),
-            url: "",
-            isLatest: true,
-            id: "",
-            semver: {
-              major: 1,
-              minor: 0,
-              patch: 0,
-
-            }
-          },
-          framework: "react",
-          isEnterprise: true
-        }
-      })
-    )
-  }
-
-  private async readWorkspaceContext(
-    workspaceRoot: string
-  ): Promise<WorkspaceContext | undefined> {
-    const packages: Partial<Record<(typeof AG_GRID_PACKAGES)[number], string>> =
-      {};
-    console.error("HERE")
-    for (const packageName of AG_GRID_PACKAGES) {
-      const packageJsonPath = path.join(
-        workspaceRoot,
-        "node_modules",
-        packageName,
-        "package.json"
-      );
-
-      console.error(packageJsonPath)
-
-      try {
-        const packageJson = await fs.readFile(packageJsonPath, {
-          encoding: "utf-8",
-        });
-        console.error(packageJson)
-        const packageInfo = JSON.parse(packageJson);
-        packages[packageName] = packageInfo.version;
-      } catch (error) {
-        console.error(error)
-        continue;
-      }
-    }
-    console.error(JSON.stringify(packages, null, 2))
-
-    const isEnterprise = !!packages["ag-grid-enterprise"];
-    let framework: FrameworkName = "javascript";
-    let versionId: string | undefined = undefined;
-
-    let context: WorkspaceContext | undefined;
-    if (packages["ag-grid-react"]) {
-      (framework = "react"), (versionId = packages["ag-grid-react"]);
-    } else if (packages["ag-grid-angular"]) {
-      framework = "angular";
-      versionId = packages["ag-grid-angular"];
-    } else if (packages["ag-grid-vue3"]) {
-      (framework = "vue"), (versionId = packages["ag-grid-vue3"]);
-    } else if (packages["ag-grid-community"]) {
-      versionId = packages["ag-grid-community"];
-    }
-
-    if (versionId) {
-      const version = await this.api.parseVersion(versionId);
-
-      return this.api
-        .parseFramework(versionId, framework)
-        .then((value) => ({ version, framework, isEnterprise }))
-        .catch(() => {
-          return undefined;
-        });
-    }
-
-    return undefined;
-  }
-
-  private async loadWorkspaces(roots: Root[]): Promise<void> {
-    this.workspaces = [];
-    console.error("Checking roots");
-    for (const root of roots) {
-      // Convert file:// URI to local path
-      const rootPath = root.uri.startsWith('file://') ? root.uri.slice(6) : root.uri;
-      const context = await this.readWorkspaceContext(rootPath);
-      console.error(context);
-      this.workspaces.push(
-        new Workspace(this.api, {
-          ...root,
-          context,
-        })
-      );
-    }
-
-    console.error(this.workspaces);
-
-    this.notify.notifyPromptListChanged();
-    this.notify.notifyResourceListChanged();
-    this.notify.notifyToolListChanged();
-  }
+  constructor(private notify: ServerNotifications) {}
 
   async onRootsChanged(roots: Root[]): Promise<void> {
-    if (roots !== this.roots) {
-        this.roots = roots;
-        return this.loadWorkspaces(roots);
-    }
+    // No-op for simplified version
   }
 
   async listPrompts(): Promise<ListPromptsResult> {
-    const prompts = await Promise.all(
-      this.workspaces.map((workspace) => workspace.listPrompts())
-    ).then((p) => p.flat());
     return {
-      prompts,
+      prompts: this.prompts.map((p) => p.listing),
     };
   }
 
   async handlePrompt(prompt: GetPromptRequest): Promise<GetPromptResult> {
-    const workspace = this.workspaces[0];
-    return workspace.handlePromptCall(
-      prompt.params.name,
-      prompt.params.arguments
-    );
+    const promptDef = this.prompts.find((p) => p.name === prompt.params.name);
+    if (!promptDef) {
+      throw new Error(`Prompt not found: ${prompt.params.name}`);
+    }
+    return promptDef.handler(prompt.params.arguments);
   }
 
   async listResources(): Promise<ListResourcesResult> {
-    const resources = await Promise.all(
-      this.workspaces.map((workspace) => workspace.listResources())
-    ).then((p) => p.flat());
     return {
-      resources,
+      resources: [],
     };
   }
 
-  async handleResource(resource: ReadResourceRequest): Promise<ReadResourceResult> {
-    const workspace = this.workspaces[0];
-    return workspace.handleResource(resource.params.uri)
+  async handleResource(
+    resource: ReadResourceRequest
+  ): Promise<ReadResourceResult> {
+    throw new Error("Resources not supported in simplified version");
   }
 
   async listTools(): Promise<ListToolsResult> {
-    const tools = await Promise.all(
-      this.workspaces.map((workspace) => workspace.listTools())
-    ).then((p) => p.flat());
     return {
-      tools,
+      tools: [
+        {
+          name: "search_docs",
+          description: "Search AG Grid React documentation for version 34.0.0",
+          inputSchema: {
+            type: "object",
+            properties: {
+              query: {
+                type: "string",
+                description: "Search query for AG Grid documentation",
+              },
+            },
+            required: ["query"],
+          },
+        },
+      ],
     };
   }
 
   async handleTools(tool: CallToolRequest): Promise<CallToolResult> {
-    const workspace = this.workspaces[0];
-    return workspace.handleToolCall(tool.params.name, tool.params.arguments);
-  }
+    if (tool.params.name === "search_docs") {
+      const query = tool.params.arguments?.query as string;
+      if (!query) {
+        throw new Error("Query parameter is required");
+      }
 
-  workspace(id: string): Workspace | undefined {
-    return this.workspaces.find((w) => w.id === id);
-  }
+      try {
+        const url = `${API_URL}34.1.0/react/search?q=${encodeURIComponent(query)}`;
+        console.error(`Requesting: ${url}`);
+        
+        const response = await fetch(url);
+        console.error(`Response status: ${response.status}, Content-Type: ${response.headers.get('content-type')}`);
+        
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}: ${response.statusText}`);
+        }
+        
+        const responseText = await response.text();
+        console.error(`Response text (first 100 chars): ${responseText.substring(0, 100)}`);
+        
+        const result = JSON.parse(responseText);
 
-  clearCache(): void {
-    this.workspaces = [];
+        const content = result.results
+          .map((x: any) => x.metadata.content)
+          .join("\n\n\n");
+
+        console.error(content);
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: content,
+            },
+          ],
+          isError: false,
+        };
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Search failed: ${error}`,
+            },
+          ],
+          isError: true,
+        };
+      }
+    }
+
+    throw new Error(`Unknown tool: ${tool.params.name}`);
   }
 }

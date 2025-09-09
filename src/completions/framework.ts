@@ -1,12 +1,10 @@
 import { CompleteResult } from "@modelcontextprotocol/sdk/types.js";
-import { VersionEndpoint } from "../api/models";
+import { GRID_FRAMEWORKS } from "../constants";
 
 
-export const completeFramework = async (version: VersionEndpoint, value: string,): Promise<CompleteResult["completion"]> => {
-    const frameworks = await version.frameworks();
 
-    const values = frameworks.map(x => x.framework).filter(x => x.startsWith(value.toLowerCase()))
-
+export const completeFramework = async (value: string): Promise<CompleteResult["completion"]> => {
+    const values = GRID_FRAMEWORKS.filter(x => x.toLowerCase().startsWith(value.toLowerCase()))
     return {
         values,
         total: values.length,

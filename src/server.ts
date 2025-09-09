@@ -11,8 +11,7 @@ import {
   ReadResourceRequestSchema,
   RootsListChangedNotificationSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { AgContentApi } from "./api";
-import { AgMcpContext } from "./context";
+import { AgMcpContext } from "./context.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 export interface ServerNotifications {
@@ -24,12 +23,10 @@ export interface ServerNotifications {
 
 export class AgMcpServer implements ServerNotifications {
   private server: Server;
-  private api: AgContentApi;
   private context: AgMcpContext;
 
   constructor(baseUrl: string) {
-    this.api = new AgContentApi(baseUrl);
-    this.context = new AgMcpContext(this.api, this);
+    this.context = new AgMcpContext(this);
 
     this.server = new Server(
       {
@@ -57,12 +54,12 @@ export class AgMcpServer implements ServerNotifications {
     this.server.setNotificationHandler(
       RootsListChangedNotificationSchema,
       () => {
-        this.updateRoots();
+        // No-op for simplified version
       }
     );
 
     this.server.setNotificationHandler(InitializedNotificationSchema, () => {
-      this.updateRoots();
+      // No-op for simplified version
     })
 
     this.server.setRequestHandler(ListPromptsRequestSchema, () => {
@@ -95,10 +92,7 @@ export class AgMcpServer implements ServerNotifications {
   }
 
   async updateRoots() {
-    this.server.listRoots().then(({ roots }) => {
-      this.server.sendLoggingMessage({ level: "info", data: "Updating Roots" });
-      this.context.onRootsChanged(roots);
-    });
+    // No-op for simplified version
   }
 
   notifyResourceListChanged() {

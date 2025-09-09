@@ -1,6 +1,9 @@
 {
-  "$schema":  "https://raw.githubusercontent.com/jetify-com/devbox/0.15.0/.schema/devbox.schema.json",
-  "packages": ["nodejs@latest"],
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.15.0/.schema/devbox.schema.json",
+  "packages": [
+    "nodejs@latest",
+    "claude-code@latest"
+  ],
   "env": {
     "DEVBOX_COREPACK_ENABLED": "1"
   }

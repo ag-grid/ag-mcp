@@ -6,60 +6,30 @@ A Model Context Protocol (MCP) server that provides AI assistants with AG-Grid s
 
 - **Framework-aware**: Supports React, Angular, Vue, and Vanilla JavaScript
 - **Version-aware**: Provides version-specific documentation and examples
-- **Code generation**: Generates framework-specific code snippets
-- **Documentation access**: Fetches current and archived AG-Grid documentation
+- **Documentation access**: Uses the correct version of documentation
 - **Feature assistance**: Helps implement common and complex AG-Grid features
 
 ## Tools
 
-### Grid Configuration
-- `generate-grid-config` - Generate basic AG-Grid configuration
-- `create-column-definitions` - Create column definitions with proper types
-- `setup-data-binding` - Generate data binding code snippets
-
-### Feature Implementation
-- `add-grid-feature` - Add specific AG-Grid features (sorting, filtering, etc.)
-- `troubleshoot-grid-issue` - Help diagnose common problems
+- `search-docs` - Search the documents for the currently installed version of `ag-grid`
 
 ## Resources
 
-- `ag-grid-docs` - Access to version-specific documentation
-- `grid-examples` - Framework-specific code examples
-- `feature-guides` - Step-by-step guides for complex features
+- `docs` - Access to version-specific documentation
+- `examples` - Framework-specific code examples
 - `migration-guides` - Version migration assistance
 
 ## Prompts
 
 - `quick-start` - Get started with AG-Grid in any framework
-- `advanced-feature` - Implement complex features like Master-Detail
-- `performance-optimization` - Optimize grid performance
+- `migrate` - Migrate to a newer version of AG-Grid
 - `troubleshooting` - Debug common issues
 
 ## Usage
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
+The server can be run using: `npx ag-mcp`
 
-2. Build the server:
-   ```bash
-   npm run build
-   ```
-
-3. Start the server:
-   ```bash
-   npm start
-   ```
-
-The server will run on stdio transport by default, suitable for integration with MCP clients.
-
-## Configuration
-
-The server can be configured via environment variables:
-
-- `AG_GRID_VERSION` - Target AG-Grid version (defaults to latest)
-- `DEFAULT_FRAMEWORK` - Default framework when not specified (defaults to 'react')
+Config, such as project roots and versions, is stored in you cache folder. For example, in MacOS it will be stored in `~/Library/Preferences/ag-mcp`
 
 ## Development
 
