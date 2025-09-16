@@ -1,5 +1,5 @@
 export const API_URL =
-  "https://ltlw22r2xdam36j7u6dlqx7hta0cziwn.lambda-url.eu-north-1.on.aws/";
+  "https://4cyqc8wqj1.execute-api.us-west-1.amazonaws.com/prod";
 
 export const GRID_FRAMEWORKS = ["vanilla", "react", "angular", "vue"] as const;
 

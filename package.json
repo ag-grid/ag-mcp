@@ -1,6 +1,6 @@
 {
   "name": "ag-mcp",
-  "version": "1.0.0-beta.20250909.1648",
+  "version": "1.0.0-beta.20250909.1658",
   "description": "MCP server for AG-Grid to help developers integrate AG-Grid into their applications",
   "main": "dist/index.js",
   "bin": {
@@ -13,8 +13,8 @@
     "start": "node dist/index.js",
     "test": "vitest",
     "updateBetaVersion": "tsx ./scripts/updateBetaVersion.ts",
-    "publish:dev:dry-run": "npm run updateBetaVersion && npm publish . --dry-run --registry http://52.50.158.57:4873/",
-    "publish:dev": "npm run updateBetaVersion && npm publish . --registry http://52.50.158.57:4873/"
+    "publish:dev:dry-run": "npm run updateBetaVersion && npm publish . --dry-run --registry http://52.50.158.57:4873/ --tag beta",
+    "publish:dev": "npm run updateBetaVersion && npm publish . --registry http://52.50.158.57:4873/ --tag beta"
   },
   "keywords": [
     "ag-grid",
@@ -43,5 +43,8 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "files": [
+    "dist/**/*"
+  ]
 }
