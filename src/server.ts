@@ -1,18 +1,21 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
   CallToolRequestSchema,
+  CompleteRequestSchema,
   GetPromptRequestSchema,
   InitializedNotificationSchema,
-  InitializeRequestSchema,
   ListPromptsRequestSchema,
   ListResourcesRequestSchema,
   ListToolsRequestSchema,
-  McpError,
   ReadResourceRequestSchema,
   RootsListChangedNotificationSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { AgMcpContext } from "./context.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { listResources, handleResource } from "./handlers/resources.js";
+import { listTools, handleTools } from "./handlers/tools.js";
+import { listPrompts, handlePrompt } from "./handlers/prompts.js";
+import { handleCompletion } from "./handlers/completions.js";
+import { detectAndSetProject } from "./state/project.js";
 
 export interface ServerNotifications {
   notifyResourceListChanged(): void;
@@ -21,96 +24,107 @@ export interface ServerNotifications {
   log(message: string): Promise<void>;
 }
 
-export class AgMcpServer implements ServerNotifications {
-  private server: Server;
-  private context: AgMcpContext;
-
-  constructor(baseUrl: string) {
-    this.context = new AgMcpContext(this);
-
-    this.server = new Server(
-      {
-        name: "ag-mcp",
-        version: "1.0.0",
-      },
-      {
-        capabilities: {
-          resources: {
-            listChanged: true,
-          },
-          prompts: {
-            listChanged: true,
-          },
-          tools: {
-            listChanged: true,
-          },
-          completions: {},
-          logging: {},
+export const createAgMcpServer = (): {
+  server: Server;
+  notifications: ServerNotifications;
+  run: () => Promise<void>;
+} => {
+  const server = new Server(
+    {
+      name: "ag-grid-mcp",
+      version: "1.0.0",
+      title: "AG Grid MCP Server",
+      description:
+        "Provides comprehensive access to AG Grid documentation, examples, and project assistance for React, Angular, Vue, and Vanilla JS implementations. The search tool provides accurate results and should be used for all AG Grid knowledge access",
+    },
+    {
+      capabilities: {
+        resources: {
+          listChanged: true,
         },
+        prompts: {
+          listChanged: true,
+        },
+        tools: {
+          listChanged: true,
+        },
+        completions: {},
+        logging: {},
       },
-    );
+    }
+  );
 
-    
-    this.server.setNotificationHandler(
-      RootsListChangedNotificationSchema,
-      () => {
-        // No-op for simplified version
+  const notifications: ServerNotifications = {
+    notifyResourceListChanged() {
+      server.sendResourceListChanged();
+    },
+    notifyToolListChanged() {
+      server.sendToolListChanged();
+    },
+    notifyPromptListChanged() {
+      server.sendPromptListChanged();
+    },
+    async log(message: string) {
+      server.sendLoggingMessage({ level: "info", data: message });
+    },
+  };
+
+  server.setNotificationHandler(
+    RootsListChangedNotificationSchema,
+    async () => {
+      try {
+        const rootPath = process.cwd();
+        const project = await detectAndSetProject(rootPath);
+        if (project) {
+          await notifications.log(
+            `Detected AG Grid project: ${project.version} (${project.framework})`
+          );
+          notifications.notifyResourceListChanged();
+          notifications.notifyToolListChanged();
+        }
+      } catch (error) {
+        // Not an error - just means no AG Grid project in current directory
       }
-    );
+    }
+  );
 
-    this.server.setNotificationHandler(InitializedNotificationSchema, () => {
-      // No-op for simplified version
-    })
+  server.setNotificationHandler(InitializedNotificationSchema, () => {
+    // Server initialization complete
+  });
 
-    this.server.setRequestHandler(ListPromptsRequestSchema, () => {
-      return this.context.listPrompts();
-    });
+  server.setRequestHandler(ListPromptsRequestSchema, async () => {
+    return listPrompts();
+  });
 
-    this.server.setRequestHandler(GetPromptRequestSchema, (params) => {
-      return this.context.handlePrompt(params);
-    });
+  server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+    return handlePrompt(request);
+  });
 
-    this.server.setRequestHandler(ListResourcesRequestSchema, () => {
-      return this.context.listResources();
-    });
+  server.setRequestHandler(ListResourcesRequestSchema, async () => {
+    return listResources();
+  });
 
-    this.server.setRequestHandler(ReadResourceRequestSchema, (params) => {
-      return this.context.handleResource(params);
-    });
+  server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    return handleResource(request);
+  });
 
-    this.server.setRequestHandler(ListToolsRequestSchema, () => {
-      return this.context.listTools();
-    });
+  server.setRequestHandler(ListToolsRequestSchema, async () => {
+    return listTools();
+  });
 
-    this.server.setRequestHandler(CallToolRequestSchema, (params) => {
-      return this.context.handleTools(params);
-    });    
-  }
+  server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    return handleTools(request);
+  });
 
-  async log(message: string) {
-    this.server.sendLoggingMessage({ level: "info", data: message });
-  }
+  server.setRequestHandler(CompleteRequestSchema, async (request) => {
+    return { completion: await handleCompletion(request) };
+  });
 
-  async updateRoots() {
-    // No-op for simplified version
-  }
-
-  notifyResourceListChanged() {
-    this.server.sendResourceListChanged();
-  }
-
-  notifyToolListChanged() {
-    this.server.sendToolListChanged();
-  }
-
-  notifyPromptListChanged() {
-    this.server.sendPromptListChanged();
-  }
-
-  async run() {
+  const run = async () => {
     const transport = new StdioServerTransport();
-    await this.server.connect(transport);
+    await server.connect(transport);
+    console.error("AG Grid MCP Server running on stdio");
+  };
 
-    console.error("AG MCP Server running on stdio");
-  }
-}
+  return { server, notifications, run };
+};

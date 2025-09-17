@@ -37,14 +37,48 @@ async function handler(args: GetPromptRequest["params"]["arguments"]): Promise<G
   const prompt = `
 I want to get started with AG-Grid in a ${framework} ${projectType} project${typescript ? ' using TypeScript' : ''}${features.length > 0 ? ` with the following features: ${features.join(', ')}` : ''}.
 
-Please help me:
-1. Set up the basic grid configuration
-2. Install the necessary dependencies
-3. Import required CSS files
-4. Create a simple example with sample data
-5. ${features.length > 0 ? `Add the requested features: ${features.join(', ')}` : 'Show me how to add common features like sorting and filtering'}
+**Important:** I have access to AG Grid MCP tools that can help with this setup:
+1. Use "detect_version" tool to see if AG Grid is already installed in my project
+2. Use "search_docs" tool to find specific documentation for ${framework}
+3. Use "list_versions" tool to see available AG Grid versions
+4. Browse AG Grid resources for ${framework}-specific articles and examples
 
-I'm looking for practical, working code examples that I can copy and use directly in my project.`;
+Please help me with a complete setup guide:
+
+1. **Installation & Dependencies:**
+   - Install the correct AG Grid packages for ${framework}${typescript ? ' with TypeScript support' : ''}
+   - Include any peer dependencies needed
+   - Recommend the best version to use
+
+2. **Basic Setup:**
+   - Set up the basic grid configuration for ${framework}
+   - Import required CSS files and themes
+   - Create the initial grid component structure
+
+3. **Sample Implementation:**
+   - Create a working example with realistic sample data
+   - Show proper ${typescript ? 'TypeScript' : 'JavaScript'} typing
+   - Include error handling and best practices
+
+4. **Core Features:**
+   ${features.length > 0 ? 
+     `- Implement the requested features: ${features.join(', ')}` : 
+     '- Add essential features like sorting, filtering, and pagination'}
+   - Show how to customize column definitions
+   - Demonstrate data binding and updates
+
+5. **Framework-Specific Integration:**
+   ${framework === 'react' ? '- Proper React hooks usage\n   - Component lifecycle integration\n   - State management patterns' : ''}
+   ${framework === 'angular' ? '- Angular service integration\n   - Module configuration\n   - Component communication patterns' : ''}
+   ${framework === 'vue' ? '- Vue 3 composition API usage\n   - Reactive data handling\n   - Component organization' : ''}
+   ${framework === 'vanilla' ? '- Pure JavaScript implementation\n   - DOM manipulation patterns\n   - Event handling setup' : ''}
+
+6. **Next Steps:**
+   - How to add more advanced features
+   - Performance optimization tips
+   - Links to relevant documentation sections
+
+Please provide complete, copy-paste ready code examples that I can use immediately in my ${framework} project.`;
 
   return {
     description: `Quick start guide for AG-Grid with ${framework}`,

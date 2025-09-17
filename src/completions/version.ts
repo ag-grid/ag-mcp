@@ -15,7 +15,7 @@ export const completeVersion = async (
     };
   } catch (error) {
     // Fallback to basic version if API fails
-    const fallbackVersions = ["34.1.0", "34.0.0", "33.3.0"];
+    const fallbackVersions = ["34.0.0", "33.0.0", "32.0.0"];
     const values = fallbackVersions.filter((v) => v.startsWith(value));
 
     return {

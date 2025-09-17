@@ -4,6 +4,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { completeVersion } from "./version.js";
 import { completeFramework } from "./framework.js";
+import { completeLanguage } from "./language.js";
 
 export const handleComplete = async ({
   argument,
@@ -15,13 +16,7 @@ export const handleComplete = async ({
     case "framework":
       return completeFramework(argument.value);
     case "language":
-      const languages = ["javascript", "typescript"];
-      const values = languages.filter((l) => l.startsWith(argument.value));
-      return {
-        values,
-        total: values.length,
-        hasMore: false,
-      };
+      return completeLanguage(argument.value);
   }
 
   return Promise.reject("Invalid completion request");

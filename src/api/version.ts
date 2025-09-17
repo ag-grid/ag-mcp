@@ -1,8 +1,11 @@
-import { fetchVersions } from "./fetch.js";
+import { fetchVersions, fetchFrameworks } from "./fetch.js";
 import { GridVersion } from "./types.js";
+import { GridFramework } from "../constants.js";
 
 let cachedVersions: GridVersion[] | null = null;
 let cacheTimestamp: number = 0;
+let cachedFrameworks: GridFramework[] | null = null;
+let frameworksCacheTimestamp: number = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 export const getVersions = async (): Promise<GridVersion[]> => {
@@ -48,4 +51,30 @@ export const getAvailableVersions = async (): Promise<string[]> => {
         if (aMinor !== bMinor) return bMinor - aMinor;
         return bPatch - aPatch;
     });
-}
+};
+
+export const getFrameworks = async (): Promise<GridFramework[]> => {
+    const now = Date.now();
+    
+    if (cachedFrameworks && (now - frameworksCacheTimestamp) < CACHE_DURATION) {
+        return cachedFrameworks;
+    }
+    
+    try {
+        const frameworks = await fetchFrameworks();
+        cachedFrameworks = frameworks;
+        frameworksCacheTimestamp = now;
+        return frameworks;
+    } catch (error) {
+        // If we have cached data, return it even if stale
+        if (cachedFrameworks) {
+            return cachedFrameworks;
+        }
+        throw error;
+    }
+};
+
+export const isValidFramework = async (framework: string): Promise<boolean> => {
+    const frameworks = await getFrameworks();
+    return frameworks.includes(framework as GridFramework);
+};
