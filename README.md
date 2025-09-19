@@ -12,7 +12,7 @@
     <p>AG Grid's Model Context Protocol (MCP) server provides AI Agents with framework and version specific knowledge to help developers integrate and maintain their AG Grid code.</p>
     <!-- END MAIN DESCRIPTION -->
     <div align="center">
-        <h4><a href="https://www.ag-grid.com?utm_source=ag-mcp-readme&utm_medium=repository&utm_campaign=github">🌐 Website</a> • <a href="https://www.ag-grid.com/javascript-data-grid/mcp-server/?utm_source=ag-mcp-readme&utm_medium=repository&utm_campaign=github">📖 Documentation</a> • <a href="https://www.ag-grid.com/community?utm_source=ag-mcp-readme&utm_medium=repository&utm_campaign=github">🏘️ Community</a></h4>
+        <h4><a href="https://www.ag-grid.com?utm_source=ag-mcp-readme&utm_medium=repository&utm_campaign=github">🌐 Website</a> • <a href="https://www.ag-grid.com/data-grid/mcp-server/?utm_source=ag-mcp-readme&utm_medium=repository&utm_campaign=github">📖 Documentation</a> • <a href="https://www.ag-grid.com/community?utm_source=ag-mcp-readme&utm_medium=repository&utm_campaign=github">🏘️ Community</a></h4>
     </div>
     <br>
     <img alt="NPM Version" src="https://img.shields.io/npm/v/ag-mcp">
