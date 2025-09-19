@@ -259,7 +259,7 @@ Need help with any specific migration step or breaking change?
 
 export const createMigrationPrompt = (): PromptDefinition => {
   return {
-    name: "migrate-version",
+    name: "upgrade-grid",
     listing,
     handler,
   };
