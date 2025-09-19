@@ -17,13 +17,12 @@
     <br>
     <img alt="NPM Version" src="https://img.shields.io/npm/v/ag-mcp">
       <img src="https://badge.mcpx.dev?status=on" title="MCP Enabled"/>
-        <img src="https://badge.mcpx.dev?status=on" title="MCP Enabled"/>
     <br><br>
 </div>
 
 ## Overview
 
-The `ag-mcp` server works with any LLM that supports MCPs, and provides tools to allow LLMS to lookup framework and version specific documentation, examples, and references to help create, modify, maintain, and upgrade your data grid code.
+The `ag-mcp` server works with any LLM that supports MCPs, and provides tools to allow LLMs to lookup framework and version specific documentation, examples, and references to help create, modify, maintain, and upgrade your data grid code.
 
 The core feature of the AG MCP Server is an LLM optimized search tool which will provide documentation, examples, API definitions and references. The content is provided in a condensed markdown so as to minimise the amount of context used, and not overwhelm the LLM.
 
@@ -175,7 +174,7 @@ Once the MCP is installed, your LLM will automatically take advantage of all the
 Prompts are pre-configured actions that allow you to perform common actions, such as creating a new grid, or migrating to a later version.
 
 - [`quick-start`](#quick-start) - Get started with AG-Grid in any framework
-- [`upgrade_grid`](#migrations--upgrades) - Migrate to a newer version of AG-Grid
+- [`upgrade-grid`](#migrations--upgrades) - Migrate to a newer version of AG-Grid
 
 #### Quick Start
 
@@ -185,13 +184,13 @@ You can pass additional context, requirements or instructions to your LLM as arg
 
 #### Migrations & Upgrades
 
-The `upgrade_grid` prompt creates a step by step plan to help migrate from your current version to the provided version. This is given to the LLM to execute, calling back to the MCP server as needed. It takes a version by version approach, making sure each version is correct before continuing.
+The `upgrade-grid` prompt creates a step by step plan to help migrate from your current version to the provided version. This is given to the LLM to execute, calling back to the MCP server as needed. It takes a version by version approach, making sure each version is correct before continuing.
 
 ### Config
 
 Config, such as project roots and versions, is stored in your cache folder. For example, in MacOS it will be stored in `~/Library/Preferences/ag-mcp`.
 
-## Resources (Docs, API & Example Search)
+### Resources (Docs, API & Example Search)
 
 The core feature of the AG MCP Server is an LLM optimized search tool which will provide documentation, examples, and API definitions/interfaces. The content is provided in a condensed markdown so as to minimise the amount of context used, and not overwhelm the LLM.
 
@@ -203,7 +202,7 @@ There are currently three sets of resources available:
 
 Your LLM can access these resources whenever it needs more information on how to implement AG Grid features. Refer to your LLM documentation for accessing these resources manually.
 
-## Tools
+### Tools
 
 Tools are schema-defined interfaces that enable AI models to perform actions. Each tool defines a specific operation with typed inputs and outputs, and the model automatically requests tool execution based on context.
 
@@ -216,11 +215,11 @@ AG-MCP currently provides four tools:
 - [`set_version`](#set-version) - Manually set the version of you repo (useful in monorepos).
 - `list_versions` - List all available AG Grid versions from the API to see what versions are available for migration or reference.
 
-### Search Docs
+#### Search Docs
 
 Search AG Grid documentation for the detected or latest version. Use this to find details on features, APIs, configurations, and troubleshooting. Supports natural language queries.
 
-### Parameters
+##### Parameters
 
 | Name      | Type   | Required | Description                                                                           |
 | --------- | ------ | -------- | ------------------------------------------------------------------------------------- |
@@ -228,21 +227,21 @@ Search AG Grid documentation for the detected or latest version. Use this to fin
 | version   | string | No       | Override the detected AG Grid version                                                 |
 | framework | string | No       | Override the detected framework                                                       |
 
-### Detect Version
+#### Detect Version
 
 Detect the AG Grid version and framework in the current project by analyzing package.json and dependencies. Use this to understand the project setup.
 
-### Parameters
+##### Parameters
 
 | Name | Type   | Required | Description                                                   |
 | ---- | ------ | -------- | ------------------------------------------------------------- |
 | path | string | No       | Path to the project directory (defaults to current workspace) |
 
-### Set Version
+#### Set Version
 
 Set the AG Grid version and framework to use for documentation searches and resources. Use this when working with a specific version or framework combination.
 
-### Parameters
+##### Parameters
 
 | Name      | Type   | Required | Description                                                               |
 | --------- | ------ | -------- | ------------------------------------------------------------------------- |
