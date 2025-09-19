@@ -27,6 +27,8 @@ The `ag-mcp` server works with any LLM that supports MCPs, and provides tools to
 
 The core feature of the AG MCP Server is an LLM optimized search tool which will provide documentation, examples, API definitions and references. The content is provided in a condensed markdown so as to minimise the amount of context used, and not overwhelm the LLM.
 
+AG-MCP also provides pre-built [prompts](#prompts) to simplify the process of [creating new grids](#quick-start), and [migrating to later versions](#migration-upgrades).
+
 ### Architecture Diagram
 
 ```mermaid
@@ -166,14 +168,14 @@ To learn more, see the [Claude MCP documentation](https://docs.claude.com/en/doc
 
 ## Usage
 
-Once the MCP is installed, your LLM will automatically take advantage of all the [Tools]() and [Resources]() available. [Tools]() and [Resources]() can also be accessed manually - refer to your LLM documentation for specific instructions.
+Once the MCP is installed, your LLM will automatically take advantage of all the [Tools](#tools) and [Resources](#resources) available. Tools and Resources can also be accessed manually - refer to your LLM documentation for specific instructions.
 
 ### Prompts
 
 Prompts are pre-configured actions that allow you to perform common actions, such as creating a new grid, or migrating to a later version.
 
-- [`quick-start`]() - Get started with AG-Grid in any framework
-- [`upgrade_grid`]() - Migrate to a newer version of AG-Grid
+- [`quick-start`](#quick-start) - Get started with AG-Grid in any framework
+- [`upgrade_grid`](#migrations-upgrades) - Migrate to a newer version of AG-Grid
 
 #### Quick Start
 
