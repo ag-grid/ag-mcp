@@ -2,9 +2,12 @@
 
 A Model Context Protocol (MCP) server that provides AI assistants with framework and version specific knowledge to help developers integrate AG Grid into their applications.
 
-**This product is still in beta**
-
 ## Installation
+
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-light.svg)](https://cursor.com/en/install-mcp?name=ag-mcp&config=eyJjb21tYW5kIjoibnB4IGFnLW1jcCJ9)
+
+[![Install in VS Code]()](vscode:mcp/install?%7B%22ag-mcp%22%3A%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22ag-mcp%22%5D%7D%7D)
+
 
 To install and use `ag-mcp` with your LLM client, simply provide the following command in the normal process for adding an MCP Server:
 
