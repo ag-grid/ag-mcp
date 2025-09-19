@@ -193,7 +193,7 @@ Config, such as project roots and versions, is stored in your cache folder. For 
 
 ## Resources (Docs, API & Example Search)
 
-The core feature of the AG MCP Server is an LLM optimized search tool which will provide documentation, examples, API definitions and references. The content is provided in a condensed markdown so as to minimise the amount of context used, and not overwhelm the LLM.
+The core feature of the AG MCP Server is an LLM optimized search tool which will provide documentation, examples, and API definitions/interfaces. The content is provided in a condensed markdown so as to minimise the amount of context used, and not overwhelm the LLM.
 
 There are currently three sets of resources available:
 
@@ -201,9 +201,7 @@ There are currently three sets of resources available:
 - `definitions` - API definitions and interfaces
 - `examples` - A library of AG Grid implementation examples in you framework.
 
-Your LLM can access these resources whenever it needs more information on how to implement AG Grid features.
-
-Refer to your LLM documentation for accessing resources in Claude, Windsurf, VS Code, and Cursor, etc...
+Your LLM can access these resources whenever it needs more information on how to implement AG Grid features. Refer to your LLM documentation for accessing these resources manually.
 
 ## Tools
 
