@@ -1,10 +1,31 @@
 # AG Grid Model Context Protocol (MCP) Server
 
-AG Grid's Model Context Protocol (MCP) server provides AI Agents with framework and version specific knowledge to help developers integrate and maintain their AG Grid code.
+<div align="center">
+    <a href="https://www.ag-grid.com?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">
+        <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/ag-logos/svg-logos/AG-Grid-Logo_Dark-Theme.svg?raw=true"/>
+        <source media="(prefers-color-scheme: light)" srcset="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/ag-logos/svg-logos/AG-Grid-Logo_Light-Theme.svg?raw=true"/>
+        <img width="100%" alt="AG Grid Logo" src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/images/ag-logos/svg-logos/AG-Grid-Logo_Light-Theme.svg?raw=true"/>
+        </picture>
+    </a>
+    <!-- START MAIN DESCRIPTION -->
+    <p>AG Grid's Model Context Protocol (MCP) server provides AI Agents with framework and version specific knowledge to help developers integrate and maintain their AG Grid code.</p>
+    <!-- END MAIN DESCRIPTION -->
+    <div align="center">
+        <h4><a href="https://www.ag-grid.com?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">🌐 Website</a> • <a href="https://www.ag-grid.com/javascript-data-grid/mcp-server/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">📖 Documentation</a> • <a href="https://www.ag-grid.com/community?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">🏘️ Community</a></h4>
+    </div>
+    <br>
+    <img alt="NPM Version" src="https://img.shields.io/npm/v/ag-mcp">
+      <img src="https://badge.mcpx.dev?status=on" title="MCP Enabled"/>
+        <img src="https://badge.mcpx.dev?status=on" title="MCP Enabled"/>
+    <br><br>
+</div>
 
 ## Overview
 
 The `ag-mcp` server works with any LLM that supports MCPs, and provides tools to allow LLMS to lookup framework and version specific documentation, examples, and references to help create, modify, maintain, and upgrade your data grid code.
+
+The core feature of the AG MCP Server is an LLM optimized search tool which will provide documentation, examples, API definitions and references. The content is provided in a condensed markdown so as to minimise the amount of context used, and not overwhelm the LLM.
 
 ### Architecture Diagram
 
@@ -88,27 +109,36 @@ flowchart LR
 
 ## Installation
 
-To install and use `ag-mcp` with your LLM client, simply provide the following command in the normal process for adding an MCP Server:
+To install and use `ag-mcp` with your LLM client, provide the `npx ag-mcp` command in the normal process for adding an MCP Server.
 
-`npx ag-mcp`
+### Cursor
 
-### Claude Code
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-light.svg)](https://cursor.com/en/install-mcp?name=ag-mcp&config=eyJjb21tYW5kIjoibnB4IGFnLW1jcCJ9)
 
-TODO: Install Button
+To open Cursor and automatically add the `ag-mcp`, click the 'Add to Cursor' button.
 
-TODO: Some description of install process
+To install manually, create a `mcp.json` file in the root of your project and add the following:
 
-```bash
-claude mcp add ag-mcp npx ag-mcp
+```json
+{
+  "mcpServers": {
+    "ag-mcp": {
+      "command": "npx",
+      "args": ["ag-mcp"]
+    }
+  }
+}
 ```
 
-To learn more, see the [Claude MCP documentation](https://docs.claude.com/en/docs/claude-code/mcp)
+To learn more, see the [Cursor MCP documentation](https://cursor.com/docs/context/mcp)
 
 ### VS Code (Copilot)
 
 [![Install in VS Code]()](vscode:mcp/install?%7B%22ag-mcp%22%3A%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22ag-mcp%22%5D%7D%7D)
 
-dd the following to your .vscode/mcp.json file in your workspace.
+To open Cursor and automatically add the `ag-mcp`, click the 'Add to Cursor' button.
+
+To install manually, create a `.vscode/mcp.json` file in your workspace, and add the following:
 
 ```bash
 "ag-mcp": {
@@ -124,38 +154,60 @@ dd the following to your .vscode/mcp.json file in your workspace.
 
 To learn more, see the [VS Code MCP documentation](https://code.visualstudio.com/docs/copilot/customization/mcp-servers).
 
-### Cursor
+### Claude Code
 
-[![Install in Cursor](https://cursor.com/deeplink/mcp-install-light.svg)](https://cursor.com/en/install-mcp?name=ag-mcp&config=eyJjb21tYW5kIjoibnB4IGFnLW1jcCJ9)
+To add `ag-mcp` to Claude code, run the following command:
 
-If it doesn't already exist, create the file mcp.json in the root of your project. Then add the following:
-
-```json
-{
-  "mcpServers": {
-    "ag-mcp": {
-      "command": "npx",
-      "args": ["ag-mcp"]
-    }
-  }
-}
+```bash
+claude mcp add ag-mcp npx ag-mcp
 ```
 
-To learn more, see the [Cursor MCP documentation](https://cursor.com/docs/context/mcp)
+To learn more, see the [Claude MCP documentation](https://docs.claude.com/en/docs/claude-code/mcp)
 
 ## Usage
 
-The server can be run using: `npx ag-mcp`
+Once the MCP is installed, your LLM will automatically take advantage of all the [Tools]() and [Resources]() available. [Tools]() and [Resources]() can also be accessed manually - refer to your LLM documentation for specific instructions.
 
-Config, such as project roots and versions, is stored in you cache folder. For example, in MacOS it will be stored in `~/Library/Preferences/ag-mcp`
+### Prompts
 
-TODO: More info on how to use the prompts, tools, resources
+Prompts are pre-configured actions that allow you to perform common actions, such as creating a new grid, or migrating to a later version.
+
+- [`quick-start`]() - Get started with AG-Grid in any framework
+- [`upgrade_grid`]() - Migrate to a newer version of AG-Grid
+
+#### Quick Start
+
+The `quick-start` prompt can be triggered directly from your LLM client. This creates a list of instructions for you LLM to follow when creating a new AG Grid project or adding AG Grid to an existing project.
+
+You can pass additional context, requirements or instructions to your LLM as arguments to this prompt to fine tune the type of data grid you want the LLM to create.
+
+#### Migrations & Upgrades
+
+The `upgrade_grid` prompt creates a step by step plan to help migrate from your current version to the provided version. This is given to the LLM to execute, calling back to the MCP server as needed. It takes a version by version approach, making sure each version is correct before continuing.
+
+### Config
+
+Config, such as project roots and versions, is stored in your cache folder. For example, in MacOS it will be stored in `~/Library/Preferences/ag-mcp`.
+
+## Resources (Docs, API & Example Search)
+
+The core feature of the AG MCP Server is an LLM optimized search tool which will provide documentation, examples, API definitions and references. The content is provided in a condensed markdown so as to minimise the amount of context used, and not overwhelm the LLM.
+
+There are currently three sets of resources available:
+
+- `articles` - Access to the full AG Grid documentation at the correct version.
+- `definitions` - API definitions and interfaces
+- `examples` - A library of AG Grid implementation examples in you framework.
+
+Your LLM can access these resources whenever it needs more information on how to implement AG Grid features.
+
+Refer to your LLM documentation for accessing resources in Claude, Windsurf, VS Code, and Cursor, etc...
 
 ## Tools
 
 Tools are schema-defined interfaces that enable AI models to perform actions. Each tool defines a specific operation with typed inputs and outputs, and the model automatically requests tool execution based on context.
 
-Tools can be called manually by entering the tool name as a prompt into your LLM, and passing the relevant params. Refer to your LLM documentation for accessing resources in Claude, Windsurf, VS Code, and Cursor, etc...
+Tools can be called manually by entering the tool name as a prompt into your LLM, and passing the relevant params. Refer to your LLM documentation for specific instructions.
 
 AG-MCP currently provides four tools:
 
@@ -196,36 +248,3 @@ Set the AG Grid version and framework to use for documentation searches and reso
 | --------- | ------ | -------- | ------------------------------------------------------------------------- |
 | version   | string | Yes      | AG Grid version to use (e.g., `"34.1.0"`)                                 |
 | framework | string | Yes      | Framework to use for documentation (`react`, `angular`, `vue`, `vanilla`) |
-
-## Resources
-
-Resources can be used to provide additional context to the LLM, such as an example, docs page, or API reference.
-
-- `articles` - Access to the full AG Grid documentation at the correct version.
-- `definitions` - API definitions and interfaces
-- `examples` - A library of AG Grid implementation examples in you framework.
-
-Refer to your LLM documentation for accessing resources in Claude, Windsurf, VS Code, and Cursor, etc...
-
-### Documentation Search
-
-The core feature of the AG MCP Server is an LLM optimized search tool (`articles`) which will provide documentation, examples, API definitions and references.
-
-Your LLM can choose to use this tool whenever it needs more information on how to implement AG Grid features. The content is provided in a condensed markdown so as to minimise the amount of context used, and not overwhelm the LLM.
-
-## Prompts
-
-Prompts are pre-configured actions that allow you to perform common actions, such as creating a new grid, or migrating to a later version.
-
-- `quick-start` - Get started with AG-Grid in any framework
-- `upgrade_grid` - Migrate to a newer version of AG-Grid
-
-### Quick Start
-
-The `quick-start` prompt can be triggered directly from your LLM client. This creates a list of instructions for you LLM to follow when creating a new AG Grid project or adding AG Grid to an existing project.
-
-You can pass additional context, requirements or instructions to your LLM as arguments to this prompt to fine tune the type of data grid you want the LLM to create.
-
-### Migrations & Upgrades
-
-The `upgrade_grid` prompt creates a step by step plan to help migrate from your current version to the provided version. This is given to the LLM to execute, calling back to the MCP server as needed. It takes a version by version approach, making sure each version is correct before continuing.
