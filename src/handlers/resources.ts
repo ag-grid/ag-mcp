@@ -16,8 +16,21 @@ import {
   fetchExamples,
   fetchExample,
 } from "../api/fetch.js";
+import {
+  validateVersionConfig,
+  VersionValidationError,
+} from "../utils/version-validator.js";
 
 export const listResources = async (): Promise<ListResourcesResult> => {
+  try {
+    await validateVersionConfig();
+  } catch (error) {
+    if (error instanceof VersionValidationError) {
+      throw new Error(`${error.message}. ${error.suggestion}`);
+    }
+    throw error;
+  }
+
   const version = await getProjectVersion();
   const framework = getProjectFramework();
   const project = getCurrentProject();
@@ -55,6 +68,16 @@ export const listResources = async (): Promise<ListResourcesResult> => {
 export const handleResource = async (
   request: ReadResourceRequest
 ): Promise<ReadResourceResult> => {
+  // Validate version configuration before handling resource
+  try {
+    await validateVersionConfig();
+  } catch (error) {
+    if (error instanceof VersionValidationError) {
+      throw new Error(`${error.message}. ${error.suggestion}`);
+    }
+    throw error;
+  }
+
   const { uri } = request.params;
 
   if (!uri.startsWith("ag-mcp://")) {

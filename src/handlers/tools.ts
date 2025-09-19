@@ -15,6 +15,7 @@ import {
   getProjectInfo,
   ProjectState,
 } from "../state/project.js";
+import { validateVersionConfig, VersionValidationError } from "../utils/version-validator.js";
 
 export const listTools = (): ListToolsResult => {
   const project = getCurrentProject();
@@ -75,7 +76,7 @@ export const listTools = (): ListToolsResult => {
         },
       },
       {
-        name: "set_version",
+        name: "set_versions",
         description:
           "Set the AG Grid version and framework to use for documentation searches and resources. Use this when working with a specific version or framework combination.",
         inputSchema: {
@@ -103,6 +104,28 @@ export const handleTools = async (
   request: CallToolRequest
 ): Promise<CallToolResult> => {
   const { name, arguments: args } = request.params;
+
+  // Skip validation for version management tools
+  const skipValidationTools = ["detect_version", "list_versions", "set_version", "set_versions"];
+  
+  if (!skipValidationTools.includes(name)) {
+    try {
+      await validateVersionConfig();
+    } catch (error) {
+      if (error instanceof VersionValidationError) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `${error.message}. ${error.suggestion}`,
+            },
+          ],
+          isError: true,
+        };
+      }
+      throw error;
+    }
+  }
 
   switch (name) {
     case "search_docs": {
@@ -219,7 +242,8 @@ export const handleTools = async (
       }
     }
 
-    case "set_version": {
+    case "set_version":
+    case "set_versions": {
       const version = args?.version as string;
       const framework = args?.framework as string;
 

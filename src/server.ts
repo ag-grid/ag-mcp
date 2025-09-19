@@ -9,6 +9,7 @@ import {
   ListToolsRequestSchema,
   ReadResourceRequestSchema,
   RootsListChangedNotificationSchema,
+  SetLevelRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { listResources, handleResource } from "./handlers/resources.js";
@@ -118,6 +119,12 @@ export const createAgMcpServer = (): {
 
   server.setRequestHandler(CompleteRequestSchema, async (request) => {
     return { completion: await handleCompletion(request) };
+  });
+
+  server.setRequestHandler(SetLevelRequestSchema, async (request) => {
+    const { level } = request.params;
+    console.error(`Log level set to: ${level}`);
+    return {};
   });
 
   const run = async () => {

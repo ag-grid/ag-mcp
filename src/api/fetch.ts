@@ -11,32 +11,52 @@ import {
 } from "./types.js";
 import { GridFramework, GridLanguage } from "../constants.js";
 
-export const fetchVersions = async (): Promise<GridVersion[]> => {
-  const url = `${API_URL}/versions`;
+// Browser-like headers to bypass WAF
+const getBrowserHeaders = (): Record<string, string> => ({
+  "User-Agent":
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  Accept: "application/json, text/plain, */*",
+  "Accept-Language": "en-US,en;q=0.9",
+  "Accept-Encoding": "gzip, deflate, br",
+  DNT: "1",
+  Connection: "keep-alive",
+  "Sec-Fetch-Dest": "empty",
+  "Sec-Fetch-Mode": "cors",
+  "Sec-Fetch-Site": "cross-site",
+});
 
-  const response = await fetch(url);
+// Common API fetch wrapper - handles URL construction and headers
+const apiFetch = async (
+  path: string,
+  options?: RequestInit
+): Promise<Response> => {
+  const url = `${API_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      ...getBrowserHeaders(),
+      ...options?.headers,
+    },
+  });
 
   if (!response.ok) {
     throw new Error(
-      `Failed to fetch versions: ${response.status} ${response.statusText}`
+      `API request failed: ${response.status} ${response.statusText}`
     );
   }
 
+  return response;
+};
+
+export const fetchVersions = async (): Promise<GridVersion[]> => {
+  const response = await apiFetch("/versions");
   const data = await response.json();
-  return data as GridVersion[];
+  return data.data as GridVersion[];
 };
 
 export const fetchFrameworks = async (): Promise<GridFramework[]> => {
-  const url = `${API_URL}/frameworks`;
-
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch frameworks: ${response.status} ${response.statusText}`
-    );
-  }
-
+  const response = await apiFetch("/frameworks");
   const data = await response.json();
   return data as GridFramework[];
 };
@@ -44,16 +64,7 @@ export const fetchFrameworks = async (): Promise<GridFramework[]> => {
 export const fetchDefinitions = async (
   version: string
 ): Promise<CollectionResponse> => {
-  const url = `${API_URL}/${version}/definitions`;
-
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch definitions: ${response.status} ${response.statusText}`
-    );
-  }
-
+  const response = await apiFetch(`/${version}/definitions`);
   const data = await response.json();
   return data as CollectionResponse;
 };
@@ -62,18 +73,9 @@ export const fetchDefinition = async (
   version: string,
   definitionName: string
 ): Promise<ItemResponse<DefinitionData>> => {
-  const url = `${API_URL}/${version}/definition/${encodeURIComponent(
-    definitionName
-  )}`;
-
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch definition: ${response.status} ${response.statusText}`
-    );
-  }
-
+  const response = await apiFetch(
+    `/${version}/definition/${encodeURIComponent(definitionName)}`
+  );
   const data = await response.json();
   return data as ItemResponse<DefinitionData>;
 };
@@ -90,16 +92,9 @@ export const fetchSearch = async (
   if (options?.examples) params.append("examples", options.examples);
   if (options?.links) params.append("links", options.links);
 
-  const url = `${API_URL}/${version}/${framework}/search?${params.toString()}`;
-
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to search documentation: ${response.status} ${response.statusText}`
-    );
-  }
-
+  const response = await apiFetch(
+    `/${version}/${framework}/search?${params.toString()}`
+  );
   const data = await response.json();
   return data as SearchResponse;
 };
@@ -116,18 +111,11 @@ export const fetchArticles = async (
   if (options?.links) params.append("links", options.links);
 
   const queryString = params.toString();
-  const url = `${API_URL}/${version}/${framework}/articles${
+  const path = `/${version}/${framework}/articles${
     queryString ? "?" + queryString : ""
   }`;
 
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch articles: ${response.status} ${response.statusText}`
-    );
-  }
-
+  const response = await apiFetch(path);
   const data = await response.json();
   return data as CollectionResponse;
 };
@@ -145,18 +133,11 @@ export const fetchArticle = async (
   if (options?.links) params.append("links", options.links);
 
   const queryString = params.toString();
-  const url = `${API_URL}/${version}/${framework}/article/${encodeURIComponent(
-    slug
-  )}${queryString ? "?" + queryString : ""}`;
+  const path = `/${version}/${framework}/article/${encodeURIComponent(slug)}${
+    queryString ? "?" + queryString : ""
+  }`;
 
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch article: ${response.status} ${response.statusText}`
-    );
-  }
-
+  const response = await apiFetch(path);
   const data = await response.json();
   return data as ItemResponse<ArticleData>;
 };
@@ -173,18 +154,11 @@ export const fetchExamples = async (
   if (options?.links) params.append("links", options.links);
 
   const queryString = params.toString();
-  const url = `${API_URL}/${version}/${framework}/${language}/examples${
+  const path = `/${version}/${framework}/${language}/examples${
     queryString ? "?" + queryString : ""
   }`;
 
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch examples: ${response.status} ${response.statusText}`
-    );
-  }
-
+  const response = await apiFetch(path);
   const data = await response.json();
   return data as CollectionResponse;
 };
@@ -203,18 +177,11 @@ export const fetchExample = async (
   if (options?.links) params.append("links", options.links);
 
   const queryString = params.toString();
-  const url = `${API_URL}/${version}/${framework}/${language}/example/${encodeURIComponent(
+  const path = `/${version}/${framework}/${language}/example/${encodeURIComponent(
     articleSlug
   )}/${encodeURIComponent(exampleSlug)}${queryString ? "?" + queryString : ""}`;
 
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch example: ${response.status} ${response.statusText}`
-    );
-  }
-
+  const response = await apiFetch(path);
   const data = await response.json();
   return data as ItemResponse<ExampleData>;
 };

@@ -5,6 +5,10 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { createQuickStartPrompt } from "../prompts/quick-start.js";
 import { createMigrationPrompt } from "../prompts/migration.js";
+import {
+  validateVersionConfig,
+  VersionValidationError,
+} from "../utils/version-validator.js";
 
 const prompts = [createQuickStartPrompt(), createMigrationPrompt()];
 
@@ -14,13 +18,28 @@ export const listPrompts = (): ListPromptsResult => {
   };
 };
 
-export const handlePrompt = async (request: GetPromptRequest): Promise<GetPromptResult> => {
+export const handlePrompt = async (
+  request: GetPromptRequest
+): Promise<GetPromptResult> => {
+  try {
+    await validateVersionConfig();
+  } catch (error) {
+    if (error instanceof VersionValidationError) {
+      throw new Error(`${error.message}. ${error.suggestion}`);
+    }
+    throw error;
+  }
+
   const { name, arguments: args } = request.params;
-  
+
   const promptDef = prompts.find((p) => p.name === name);
   if (!promptDef) {
-    throw new Error(`Prompt not found: ${name}. Available prompts: ${prompts.map(p => p.name).join(', ')}`);
+    throw new Error(
+      `Prompt not found: ${name}. Available prompts: ${prompts
+        .map((p) => p.name)
+        .join(", ")}`
+    );
   }
-  
+
   return promptDef.handler(args);
 };
