@@ -116,7 +116,7 @@ To install and use `ag-mcp` with your LLM client, provide the `npx ag-mcp` comma
 
 [![Install in Cursor](https://cursor.com/deeplink/mcp-install-light.svg)](https://cursor.com/en/install-mcp?name=ag-mcp&config=eyJjb21tYW5kIjoibnB4IGFnLW1jcCJ9)
 
-To open Cursor and automatically add the `ag-mcp`, click the 'Add to Cursor' button.
+To open Cursor and automatically add the `ag-mcp` server, click the 'Add to Cursor' button.
 
 To install manually, create a `mcp.json` file in the root of your project and add the following:
 
@@ -137,7 +137,7 @@ To learn more, see the [Cursor MCP documentation](https://cursor.com/docs/contex
 
 [![Install in VS Code]()](vscode:mcp/install?%7B%22ag-mcp%22%3A%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22ag-mcp%22%5D%7D%7D)
 
-To open Cursor and automatically add the `ag-mcp`, click the 'Add to Cursor' button.
+To open VS Code and automatically add the `ag-mcp` server, click the 'Install in VS Code' link.
 
 To install manually, create a `.vscode/mcp.json` file in your workspace, and add the following:
 
@@ -198,7 +198,7 @@ There are currently three sets of resources available:
 
 - `articles` - Access to the full AG Grid documentation at the correct version.
 - `definitions` - API definitions and interfaces
-- `examples` - A library of AG Grid implementation examples in you framework.
+- `examples` - A library of AG Grid implementation examples in your framework.
 
 Your LLM can access these resources whenever it needs more information on how to implement AG Grid features. Refer to your LLM documentation for accessing these resources manually.
 
@@ -211,8 +211,8 @@ Tools can be called manually by entering the tool name as a prompt into your LLM
 AG-MCP currently provides four tools:
 
 - [`search_docs`](#search-docs) - Search the documents for the currently installed version of AG Grid.
-- [`detect_version`](#detect-verion) - Infers the version and framework of AG Grid installed in your repo.
-- [`set_version`](#set-version) - Manually set the version of you repo (useful in monorepos).
+- [`detect_version`](#detect-version) - Infers the version and framework of AG Grid installed in your repo.
+- [`set_version`](#set-version) - Manually set the version of your repo (useful in monorepos).
 - `list_versions` - List all available AG Grid versions from the API to see what versions are available for migration or reference.
 
 #### Search Docs
