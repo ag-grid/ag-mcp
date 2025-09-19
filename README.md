@@ -213,10 +213,10 @@ Tools can be called manually by entering the tool name as a prompt into your LLM
 
 AG-MCP currently provides four tools:
 
-- [`search_docs`]() - Search the documents for the currently installed version of AG Grid.
-- [`detect_version`]() - Infers the version and framework of AG Grid installed in your repo.
-- [`set_version`]() - Manually set the version of you repo (useful in monorepos).
-- [`list_versions`]() - List all available AG Grid versions from the API to see what versions are available for migration or reference.
+- [`search_docs`](#search-docs) - Search the documents for the currently installed version of AG Grid.
+- [`detect_version`](#detect-verion) - Infers the version and framework of AG Grid installed in your repo.
+- [`set_version`](#set-version) - Manually set the version of you repo (useful in monorepos).
+- `list_versions` - List all available AG Grid versions from the API to see what versions are available for migration or reference.
 
 ### Search Docs
 
