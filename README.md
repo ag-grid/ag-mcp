@@ -147,7 +147,7 @@ To install manually, create a `.vscode/mcp.json` file in your workspace, and add
     "type": "stdio",
     "command": "npx",
     "args": [
-        "ag-mcp@0.0.1-beta.1",
+        "ag-mcp@{REPLACE-WITH-VERSION-NUMBER}",
         "${input:stdio-arg}"
     ],
     "env": {}
