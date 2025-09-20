@@ -28,7 +28,7 @@
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "ag-grid-community": "^34.1.2",
+    "ag-grid-community": "latest",
     "env-paths": "^3.0.0",
     "local-pkg": "^1.1.2",
     "node-fetch": "^3.3.2",

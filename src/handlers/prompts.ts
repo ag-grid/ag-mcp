@@ -21,16 +21,18 @@ export const listPrompts = (): ListPromptsResult => {
 export const handlePrompt = async (
   request: GetPromptRequest
 ): Promise<GetPromptResult> => {
-  try {
-    await validateVersionConfig();
-  } catch (error) {
-    if (error instanceof VersionValidationError) {
-      throw new Error(`${error.message}. ${error.suggestion}`);
-    }
-    throw error;
-  }
-
   const { name, arguments: args } = request.params;
+
+  if (name !== "quick-start") {
+    try {
+      await validateVersionConfig();
+    } catch (error) {
+      if (error instanceof VersionValidationError) {
+        throw new Error(`${error.message}. ${error.suggestion}`);
+      }
+      throw error;
+    }
+  }
 
   const promptDef = prompts.find((p) => p.name === name);
   if (!promptDef) {
